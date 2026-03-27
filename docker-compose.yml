@@ -1,0 +1,29 @@
+# Dota 2 Item Shop - single-service deployment
+# Build and run: docker compose up --build
+# Optional: use .env for SECRET_KEY, ALLOWED_HOSTS, etc.
+
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-change-me-in-production-min-50-chars}
+      - DEBUG=${DEBUG:-false}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS:-*}
+      - SPA_ROOT=/app/frontend/dist
+      - DB_PATH=/app/data/db.sqlite3
+    volumes:
+      # Persist SQLite and uploaded media
+      - app_data:/app/data
+      - app_media:/app/media
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/health/')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+volumes:
+  app_data:
+  app_media:
