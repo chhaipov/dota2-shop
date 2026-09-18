@@ -1,92 +1,65 @@
-# Dota 2 Item Shop
+# SCDemo - Intentionally Vulnerable Web App
 
-A Dota 2 item purchasing web app. Built with Django (backend) and Vite + React (frontend). Available as both Django templates and Vite SPA — use the navbar switch to toggle between them.
+## WARNING
 
-## Tech Stack
+This project is intentionally insecure and is built for security training, labs, and testing practice only.
 
-| Part | Technology |
-|------|------------|
-| SPA | Vite + React |
-| Templates | Django |
-| API | Django REST Framework |
-| Admin | Django Admin |
+Do not use this app in production.
+Do not expose it to the public internet without strict isolation.
+Do not store real user data, credentials, or secrets in this app.
 
-## Quick Start
+Use only in a controlled environment (local machine, private lab network, or isolated VM).
 
-### Backend (Django)
+## Allowed Use
 
-```bash
-cd backend
-python -m venv venv
-venv\Scripts\activate          # Windows
-# source venv/bin/activate     # Mac/Linux
-pip install -r requirements.txt
-python manage.py migrate
-python manage.py seed_items     # Load Dota 2 items
-python manage.py createsuperuser   # For admin access
-python manage.py runserver
-```
+- Security training and classroom exercises
+- CTF/lab practice
+- Demonstrating web/API vulnerabilities and attack workflows
 
-Backend runs at **http://localhost:8000**
+## Not Allowed / Not Recommended
 
-### Frontend (Vite)
+- Production deployment
+- Hosting with real customer data
+- Running on open internet without proper containment
+
+## Quick Run (Access Web via Backend)
+
+### 1) Build frontend and copy into backend static
 
 ```bash
 cd frontend
 npm install
-npm run dev
+VITE_API_URL=/api npm run build
 ```
 
-Frontend runs at **http://localhost:5173**
+Copy build to backend static:
 
-### Admin Panel
+```bash
+rm -rf ../backend/static/spa
+mkdir -p ../backend/static/spa
+cp -r dist/* ../backend/static/spa/
+```
 
-1. Create superuser: `python manage.py createsuperuser`
-2. Open **http://localhost:8000/admin/**
-3. Login with superuser credentials
-4. Manage **Dota 2 Items**, **Orders**, **Carts**, **Users**
+### 2) Run backend
 
-## Routes
+```bash
+cd backend
+python -m venv venv
+# Windows:
+venv\Scripts\activate
+# Mac/Linux:
+# source venv/bin/activate
 
-### Django Templates
+pip install -r requirements.txt
+python manage.py migrate
+python manage.py runserver 0.0.0.0:8000
+```
 
-| URL | Description |
-|-----|-------------|
-| `/shop/` | Landing page |
-| `/shop/login/` | Log in |
-| `/shop/register/` | Create account |
-| `/shop/items/` | Item list |
-| `/shop/item/:id/` | Item detail |
-| `/shop/cart/` | Cart |
-| `/shop/orders/` | Order history |
+### 3) Open app from backend
 
-### Vite SPA
+- App URL: `http://localhost:8000`
+- Swagger: `http://localhost:8000/api/docs/`
+- Redoc: `http://localhost:8000/api/redoc/`
 
-| URL | Description |
-|-----|-------------|
-| `/` | Store (items grid) |
-| `/item/:id` | Item detail |
-| `/cart` | Cart |
-| `/orders` | Order history |
-| `/login` | Log in |
-| `/register` | Create account |
+Do not use `http://localhost:5173` for this run mode.
 
-### API (JWT)
-
-| Method | Endpoint | Auth |
-|--------|----------|------|
-| POST | `/api/auth/token/` | No |
-| POST | `/api/auth/token/refresh/` | No |
-| POST | `/api/auth/register/` | No |
-| GET | `/api/items/` | No |
-| GET | `/api/items/:id/` | No |
-| GET | `/api/cart/` | JWT |
-| POST | `/api/cart/add/` | JWT |
-| PATCH | `/api/cart/:id/` | JWT |
-| DELETE | `/api/cart/:id/` | JWT |
-| GET | `/api/orders/` | JWT |
-| POST | `/api/orders/` | JWT |
-
-## CORS
-
-Backend allows `http://localhost:5173` and `http://127.0.0.1:5173` for the Vite dev server.
